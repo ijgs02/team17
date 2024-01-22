@@ -11,6 +11,12 @@ Hotline Miami, Heat signature, Hitman
 Art style inspo:
 Dead cells, Hyper light drifter, Into the breach (pixel art with lighting engine)
 
+Setting:
+a. maybe a current day baddass, like john wick etc
+b. super hero who doesnt want to kill (ie, batman)
+c. baddass ww2 fightign nazis ! (in this case he doesnt use guns because he wasnts to feel the nazis bones break in his hands)
+d. dystopian future overthrowing a fascist government (would be cool, but kinda undermines the joke of the idea)
+
 Challenge #1 - Physics
 It should feel intuitive to move around, responsive and clean. There should be a weight to combat, with a good lunge to close
 that last bit of distance. Ray casting will be nessesary for the gunfire of the enemies. The movemenet of the camera is also 

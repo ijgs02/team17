@@ -32,7 +32,9 @@ class Player{
     
   }
   
- d
+  void render(){
+    rect(x,y,size,size); 
+  }
   
   void move(boolean[] keyspressed){
     if(keyspressed[0]&&canmoveU){

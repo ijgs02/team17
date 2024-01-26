@@ -3,6 +3,7 @@ import processing.awt.PGraphicsJava2D;
 int x,y;
 Player p1;
 Terrain t1;
+Camera cam;
 boolean[] keyspressed = new boolean[5];
 long stime;
 public long tick;
@@ -13,7 +14,8 @@ void setup(){
  size(1500,1000);
  x = width/2;
  y = height/2;
- p1 = new Player(x,y); 
+ p1 = new Player(x,y);
+ cam = new Camera(x,y);
  t1 = new Terrain(100,100);
  stime = millis();
  tick = 0;
@@ -30,7 +32,8 @@ void draw(){
   background(42);
   p1.checkcollision(t1);
   p1.move(keyspressed);
-  camera(camMat, p1.x,p1.y,1.0,1.0);
+  cam.move(p1.x,p1.y);
+  camera(camMat, cam.x,cam.y,1.0,1.0);
   p1.render();
   t1.render();
 }

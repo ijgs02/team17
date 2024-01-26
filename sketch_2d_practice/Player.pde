@@ -18,13 +18,16 @@ class Player{
   boolean canmoveD;
   boolean canmoveR;
   
-  Player(int startingX, int startingY){
+  PImage player;
+  
+  Player(int startingX, int startingY,PImage inplayer){
     x = startingX;
     y = startingY;
     size = 20;
     speed = 1;
     rolllength = 20;
     cooldown = 100;
+    player = inplayer;
     canmoveU = true;
     canmoveL = true;
     canmoveD = true;
@@ -33,7 +36,7 @@ class Player{
   }
   
   void render(){
-    rect(x,y,size,size); 
+    image(player,x,y);
   }
   
   void move(boolean[] keyspressed){

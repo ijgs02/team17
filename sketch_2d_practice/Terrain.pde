@@ -7,8 +7,8 @@ class Terrain{
   Terrain(int startingX, int startingY){
     x = startingX;
     y = startingY;
-    w = 50;
-    h = 1000;
+    w = 1;
+    h = 1;
   }
   
   void render(){

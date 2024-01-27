@@ -1,13 +1,16 @@
 import processing.awt.PGraphicsJava2D;
 
 Player p1;
-int x,y;
+float x,y;
 boolean[] keyspressed = new boolean[5];
-long stime;
+long ptime;
 public long tick;
 ArrayList<Terrain> terrainlist;
+ArrayList<Enemy> enemylist;
+
 PImage testimage;
 PImage player;
+PImage overlay;
 Camera cam;
 PMatrix2D camMat = new PMatrix2D();
 
@@ -16,33 +19,61 @@ void setup(){
  x = width/2;
  y = height/2;
  cam = new Camera(x,y);
- stime = millis();
+ ptime = millis();
  tick = 0;
  testimage = loadImage("background1.png");
  player = loadImage("player1.png");
+ overlay = loadImage("darkoverlay.png");
  p1 = new Player(x,y,player);
+ enemylist = new ArrayList<Enemy>();
+ enemylist.add(new Enemy(0,0));
+ terrainlist = new ArrayList<Terrain>();
+ terrainlist.add(new Terrain(750, 350));
  frameRate(50);
 }
 
 void setticks(){
- tick =floor((millis() - stime)/10);
+ float mod;
+ if(keyspressed[4]){
+   mod = 0.5;
+ }
+ else{
+   mod = 1;
+ }
+ tick +=floor((millis() - ptime)/10) * mod;
+ ptime = millis();
 }
 
 void draw(){
   setticks();
   background(42);
-//  p1.checkcollision(t1);
-//  for(Terrain tn : terrainlist){
-//     p1.checkcollision(tn);
-//  } 
-//  for(Terrain tn : terrainlist){
-//      tn.render();
-//  }
-  p1.move(keyspressed);
   cam.move(p1.x,p1.y);
-  camera(camMat, cam.x,cam.y,10,10);
+  camera(camMat, cam.x,cam.y,1,1);
   image(testimage,0.0,0.0);
+  for(Terrain tn : terrainlist){
+      tn.render();
+      tn.checkcollision(p1);
+  }
+   
+  for(int i=enemylist.size()-1;i>=0;i--){
+     Enemy en = enemylist.get(i);
+     en.move();
+     en.playercollision(p1);
+     if(en.shouldRemove){
+       enemylist.remove(en);
+     }
+     else{
+       en.render();
+     }
+  } 
+  
+  p1.move(keyspressed);
   p1.render();
+  if(keyspressed[4]){
+    tint(255,75);
+    image(overlay,0,0);
+    tint(255,255);
+  }
   println("%i",frameRate);
 }
 
@@ -58,6 +89,9 @@ void keyPressed(){
   }
   if(key == 'd'){
     keyspressed[3] = true;
+  }
+  if(keyCode ==TAB){
+    keyspressed[4] = true;
   }
   if(key == ' '){
     p1.roll(keyspressed); 
@@ -76,6 +110,9 @@ void keyReleased(){
   }
   if(key == 'd'){
     keyspressed[3] = false;
+  }
+   if(keyCode ==TAB){
+    keyspressed[4] = false;
   }
 }
 

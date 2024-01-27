@@ -3,14 +3,14 @@ class Camera{
   float y;
   int speed;
   
-  Camera(int startingx, int startingy){
-    x = (float)startingx;
-    y = (float)startingy;
+  Camera(float startingx, float startingy){
+    x = startingx;
+    y = startingy;
   }
   
-  void move(int px, int py){
-    float delx = x-(float)px;
-    float dely = y-(float)py;
+  void move(float px, float py){
+    float delx = x-px;
+    float dely = y-py;
 /*
     if(delx<3 && delx>-3){
       x = (float)px;
@@ -23,7 +23,7 @@ class Camera{
       return;
     }
 */
-    x-=delx/10;
-    y-=dely/10;
+    x-=delx/4;
+    y-=dely/4;
   }
 }

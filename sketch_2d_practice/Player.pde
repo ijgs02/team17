@@ -1,8 +1,10 @@
 class Player{
-  int x; 
-  int y;
-  int size;
-  int speed;
+  float x; 
+  float y;
+  float w;
+  float h;
+  float speed;
+  long ptick;
   
   int rolllength; 
   int cooldown;
@@ -20,12 +22,14 @@ class Player{
   
   PImage player;
   
-  Player(int startingX, int startingY,PImage inplayer){
+  Player(float startingX, float startingY,PImage inplayer){
     x = startingX;
     y = startingY;
-    size = 20;
-    speed = 1;
-    rolllength = 20;
+    h = 20;
+    w = 10;
+    ptick=0;
+    speed = 2;
+    rolllength = 15;
     cooldown = 100;
     player = inplayer;
     canmoveU = true;
@@ -40,34 +44,36 @@ class Player{
   }
   
   void move(boolean[] keyspressed){
+    float change = (tick-ptick)*speed/2;
+    ptick = tick;
     if(keyspressed[0]&&canmoveU){
-      y-=speed;
+      y-=change;
     }
     if(keyspressed[1]&&canmoveL){
-      x-=speed;
+      x-=change;
     }
     if(keyspressed[2]&&canmoveD){
-      y+=speed;
+      y+=change;
     }
     if(keyspressed[3]&&canmoveR){
-      x+=speed;
+      x+=change;
     }
     if(rolling){
     if(rw&&canmoveU){
-      y-=speed;
+      y-=change;
     }
     if(ra&&canmoveL){
-      x-=speed;
+      x-=change;
     }
     if(rs&&canmoveD){
-      y+=speed;
+      y+=change;
     }
     if(rd&&canmoveR){
-      x+=speed;
+      x+=change;
     }
       if(tick - rollstart >=rolllength){
         rolling = false;
-        speed = 1;
+        speed = 2;
         return;
       }
     }
@@ -76,7 +82,7 @@ class Player{
   void roll(boolean[] keyspressed){
     if(tick-cooldown >rollstart){
       rollstart = tick;
-      speed = 12;
+      speed = 3;
       rolling = true;
       rw = keyspressed[0];
       ra = keyspressed[1];
@@ -85,85 +91,5 @@ class Player{
     }
   }
   
-  void checkcollision(Terrain t1){
-    canmoveU = true;
-    canmoveL = true;
-    canmoveD = true;
-    canmoveR = true;
-    boolean ain = x>=t1.x && x<=t1.x+t1.w && y>=t1.y && y<=t1.y+t1.h;
-    boolean bin = x+size>=t1.x && x+size<=t1.x+t1.w && y>t1.y && y<=t1.y+t1.h;
-    boolean cin = x>=t1.x && x<=t1.x+t1.w && y+size>=t1.y && y+size<=t1.y+t1.h;
-    boolean din = x+size>=t1.x && x+size<=t1.x+t1.w && y+size>=t1.y && y+size<=t1.y+t1.h;
-    if(!(ain||bin||cin||din)){
-      return;
-    }
-    if(ain&&bin){
-      canmoveU = false;
-      y = t1.y + t1.h;
-      return;
-    }
-    if(ain&&cin){
-      canmoveL = false;
-      x = t1.x + t1.w;
-      return;
-    }
-    if(bin&&din){
-      canmoveR = false;
-      x = t1.x -size;
-      return;
-    }
-    if(cin&&din){
-      canmoveD = false;
-      y = t1.y-size;
-      return;
-    }
-    if(ain){
-      if(x-t1.x+t1.h>y-t1.y+t1.w){
-        canmoveL = false;
-        x = t1.x + t1.w;    
-      return;
-      }
-      else{
-        canmoveU = false;
-        y = t1.y + t1.h;
-        return;
-      }
-    }
-    if(bin){
-      if(x+size-t1.x>t1.y+t1.h-y){
-        canmoveU = false;
-        y = t1.y + t1.h;    
-        return;
-      }
-      else{
-        canmoveR = false;
-        x  = t1.x - size;
-        return;
-      }
-    }
-    if(cin){
-      if(t1.x+t1.w-x<y-t1.y+size){
-        canmoveL = false;
-        x = t1.x + t1.w;    
-        return;
-      }
-      else{
-        canmoveD = false;
-        y = t1.y-size;
-        return;
-      }
-    }
-    if(din){
-      if(x-t1.x+size>y-t1.y+size){
-        canmoveD = false;
-        y = t1.y - size;    
-        return;
-      }
-      else{
-        canmoveR = false;
-        x = t1.x-size;
-        return;
-      }
-    }
-  }
+
 }

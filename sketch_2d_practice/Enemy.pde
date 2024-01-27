@@ -1,21 +1,35 @@
-class Terrain{
+class Enemy{
   int x;
   int y;
   int w;
   int h;
+  int speed;
+  long ptick;
+  boolean shouldRemove;
+  //movement path
   
-  Terrain(int startingX, int startingY){
-    x = startingX;
-    y = startingY;
-    w = 40;
-    h = 40;
+  Enemy(int startingX, int startingY){
+   x = startingX;
+   y = startingY;  
+   w = 20;
+   h = 20;
+   speed = 3;
+   ptick=0;
+   shouldRemove = false;
   }
   
   void render(){
     rect(x,y,w,h);
-  }  
+  }
   
-    void checkcollision(Player p1){
+  void move(){
+    float change = (tick-ptick)*speed/2;
+    ptick = tick;
+    x+=change;
+  }
+  
+//Still only works for if the player is smaller than the object, we need to make another one for if the object is smaller. 
+  void playercollision(Player p1){
     p1.canmoveU = true;
     p1.canmoveL = true;
     p1.canmoveD = true;
@@ -25,6 +39,10 @@ class Terrain{
     boolean cin = p1.x>=x && p1.x<=x+w && p1.y+p1.h>=y && p1.y+p1.h<=y+h;
     boolean din = p1.x+p1.w>=x && p1.x+p1.w<=x+w && p1.y+p1.h>=y && p1.y+p1.h<=y+h;
     if(!(ain||bin||cin||din)){
+      return;
+    }
+    if(p1.rolling){
+      shouldRemove = true;
       return;
     }
     if(ain&&bin){

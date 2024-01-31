@@ -7,36 +7,39 @@ import processing.awt.PGraphicsJava2D;
 
 Player p1;
 float x,y;
+float scale;
 boolean[] keyspressed = new boolean[5];
 long ptime;
 public long tick;
-ArrayList<Terrain> terrainlist;
 ArrayList<Enemy> enemylist;
 
 PImage testimage;
 PImage player;
 PImage overlay;
+
 Camera cam;
 PMatrix2D camMat = new PMatrix2D();
 
 void setup(){
+  ellipseMode(RADIUS);
+//  ellipseMode(CENTER);
  size(1500,1000,P2D);
  x = width/2;
  y = height/2;
+ scale = .1;
  cam = new Camera(x,y);
  ptime = millis();
  tick = 0;
- testimage = loadImage("background1.jpeg");
- player = loadImage("player1.jpeg");
- player.resize(45,45);
- overlay = loadImage("darkoverlay.png");
+ testimage = loadImage("background2.jpg");
+ testimage.resize(19200,19200);
+ player = loadImage("at1.png");
+// player.resize(45,45);
+ overlay = loadImage("darkness.png");
  overlay.resize(7500,5000);
- p1 = new Player(0,4500,player);
+ p1 = new Player(5000,5000,player);
  enemylist = new ArrayList<Enemy>();
- enemylist.add(new Enemy(0,0));
- terrainlist = new ArrayList<Terrain>();
- load();
-// terrainlist.add(new Terrain(750, 350));
+// enemylist.add(new Enemy(0,0,p1));
+ spawnenemies();
  frameRate(50);
  
   oscP5 = new OscP5(this, 6500);
@@ -55,32 +58,35 @@ void setticks(){
  ptime = millis();
 }
 
-void load(){
-  String[] lines = loadStrings("output.txt");
-  int l = lines.length;
-  println("there are %i lines",l);
-  for(String s:lines){
-     String[] snsplit = s.split(" ");
-     terrainlist.add(new Terrain(Integer.parseInt(snsplit[0]),Integer.parseInt(snsplit[1]),Integer.parseInt(snsplit[5]),Integer.parseInt(snsplit[5]),2));
+void spawnenemies(){
+  for(int i=0; i< 9; i++){
+    enemylist.add(new Enemy(0,5000*i,p1));
   }
-}  
+  for(int i=0; i< 9; i++){
+    enemylist.add(new Enemy(5000*i,0,p1));
+  }
+  for(int i=0; i< 9; i++){
+    enemylist.add(new Enemy(5000*i,50000,p1));
+  }  
+  for(int i=0; i< 9; i++){
+    enemylist.add(new Enemy(50000,5000*i,p1));
+  }  
+}
+
 
 
 void draw(){
   setticks();
   background(42);
   cam.move(p1.x,p1.y);
-  camera(camMat, cam.x,cam.y,3,3);
+  camera(camMat, cam.x,cam.y,scale,scale);
   image(testimage,0.0,0.0);
-  for(Terrain tn : terrainlist){
- //     tn.render();
-      tn.checkcollision(p1);
-  }
-   
   for(int i=enemylist.size()-1;i>=0;i--){
      Enemy en = enemylist.get(i);
-     en.move();
-     en.playercollision(p1);
+     en.updateVector(p1);
+     en.chase();
+//     en.move();
+     en.collideTest(p1);
      if(en.shouldRemove){
        enemylist.remove(en);
      }
@@ -89,15 +95,22 @@ void draw(){
      }
   } 
   
+  p1.updatecds();
   p1.move(keyspressed);
   p1.render();
-  if(keyspressed[4]){
-    tint(255,75);
-    image(overlay,0,0);
-    tint(255,255);
-  }
+
 //  println("%i",frameRate);
 }
+
+void mousePressed(){
+  if(mouseButton == LEFT && !p1.bAoncd && !p1.rolling && !p1.attacking && (tick - p1.aTick > p1.bAcd)){
+     float mpx = ((mouseX-(width/2))/scale)+p1.x;
+     float mpy = ((mouseY-(height/2))/scale)+p1.y;
+     p1.basicAttack(mpx,mpy);
+  }
+  
+}
+
 
 void keyPressed(){
   if(key == 'w'){
@@ -145,6 +158,7 @@ void keyReleased(){
     keyspressed[4] = false;
   }
 }
+
 
 PVector translation(PMatrix2D m, PVector out){
   return out.set(m.m02,m.m12,0.0);

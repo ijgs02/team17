@@ -10,12 +10,12 @@ float x,y;
 boolean[] keyspressed = new boolean[5];
 long ptime;
 public long tick;
-ArrayList<Terrain> terrainlist;
 ArrayList<Enemy> enemylist;
 
 PImage testimage;
 PImage player;
 PImage overlay;
+
 Camera cam;
 PMatrix2D camMat = new PMatrix2D();
 
@@ -26,17 +26,14 @@ void setup(){
  cam = new Camera(x,y);
  ptime = millis();
  tick = 0;
- testimage = loadImage("background1.jpeg");
- player = loadImage("player1.jpeg");
- player.resize(45,45);
- overlay = loadImage("darkoverlay.png");
+ 
+ player = loadImage("at1.png");
+// player.resize(45,45);
+ overlay = loadImage("darkoverlay.jpeg");
  overlay.resize(7500,5000);
  p1 = new Player(0,4500,player);
  enemylist = new ArrayList<Enemy>();
  enemylist.add(new Enemy(0,0));
- terrainlist = new ArrayList<Terrain>();
- load();
-// terrainlist.add(new Terrain(750, 350));
  frameRate(50);
  
   oscP5 = new OscP5(this, 6500);
@@ -55,32 +52,18 @@ void setticks(){
  ptime = millis();
 }
 
-void load(){
-  String[] lines = loadStrings("output.txt");
-  int l = lines.length;
-  println("there are %i lines",l);
-  for(String s:lines){
-     String[] snsplit = s.split(" ");
-     terrainlist.add(new Terrain(Integer.parseInt(snsplit[0]),Integer.parseInt(snsplit[1]),Integer.parseInt(snsplit[5]),Integer.parseInt(snsplit[5]),2));
-  }
-}  
-
-
 void draw(){
   setticks();
   background(42);
+
   cam.move(p1.x,p1.y);
-  camera(camMat, cam.x,cam.y,3,3);
-  image(testimage,0.0,0.0);
-  for(Terrain tn : terrainlist){
- //     tn.render();
-      tn.checkcollision(p1);
-  }
+  camera(camMat, cam.x,cam.y,.1,.1);
+  image(overlay,0,0);
    
   for(int i=enemylist.size()-1;i>=0;i--){
      Enemy en = enemylist.get(i);
      en.move();
-     en.playercollision(p1);
+     en.collideTest(p1);
      if(en.shouldRemove){
        enemylist.remove(en);
      }
@@ -145,6 +128,7 @@ void keyReleased(){
     keyspressed[4] = false;
   }
 }
+
 
 PVector translation(PMatrix2D m, PVector out){
   return out.set(m.m02,m.m12,0.0);

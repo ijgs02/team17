@@ -26,7 +26,7 @@ class Player{
 
   boolean bAoncd;
   boolean attacking;
-  long bAcd;
+  int bAcd;
   long aTick;
   int bAlen;
 
@@ -45,13 +45,12 @@ class Player{
     attacking = false;
     ptick=0;
     aTick = 0;
-    bAcd = 40;
+    bAcd = 75;
     bAlen = 20;
     rollboost =30;
     rolllength = 50;
     Rcd = 100;
     player = inplayer;
-
     health = 3;
   }
   
@@ -62,9 +61,10 @@ class Player{
     if(rolling){
       fill(0,255,255);
     }
-    ellipse(x,y,r,r);
+//    ellipse(x,y,r,r);
     fill(255);
-    //image(player,x-250,y-250);
+
+    image(player,x-500,y-500);
   }
   
   void move(boolean[] keyspressed){

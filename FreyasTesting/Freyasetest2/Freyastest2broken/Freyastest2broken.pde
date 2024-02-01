@@ -1,11 +1,15 @@
 import oscP5.*;
 import netP5.*;
+import java.util.Random;
 OscP5 oscP5;
 NetAddress myBroadcastLocation;
-
+OscMessage attack;
+OscMessage roll;
 import processing.awt.PGraphicsJava2D;
 
 Player p1;
+Spawning spawn;
+UI user;
 float x,y;
 float scale;
 boolean[] keyspressed = new boolean[5];
@@ -15,14 +19,14 @@ ArrayList<Enemy> enemylist;
 
 PImage testimage;
 PImage player;
-PImage overlay;
+PImage asymbol;
+Random rand = new Random();
 
 Camera cam;
 PMatrix2D camMat = new PMatrix2D();
 
 void setup(){
-  ellipseMode(RADIUS);
-//  ellipseMode(CENTER);
+ ellipseMode(RADIUS);
  size(1500,1000,P2D);
  x = width/2;
  y = height/2;
@@ -30,48 +34,32 @@ void setup(){
  cam = new Camera(x,y);
  ptime = millis();
  tick = 0;
- testimage = loadImage("background2.jpg");
- testimage.resize(19200,19200);
- player = loadImage("at1.png");
-// player.resize(45,45);
- overlay = loadImage("darkness.png");
- overlay.resize(7500,5000);
+ player = loadImage("atsymbol.png");
+ player.resize(1000,1000);
+ asymbol = loadImage("asymbol.png");
+ asymbol.resize(1000,1000);
  p1 = new Player(5000,5000,player);
  enemylist = new ArrayList<Enemy>();
-// enemylist.add(new Enemy(0,0,p1));
- spawnenemies();
+ spawn = new Spawning();
+ user = new UI(p1);
+// spawn.firstspawn(enemylist);
+//
  frameRate(50);
  
   oscP5 = new OscP5(this, 6500);
   myBroadcastLocation = new NetAddress("127.0.0.1", 6449);
+  attack = new OscMessage("/foo/notes");
+  attack.add(1);
+  roll = new OscMessage("/foo/notes");
+  roll.add(2);
 }
 
 void setticks(){
- float mod;
- if(keyspressed[4]){
-   mod = 0.5;
- }
- else{
-   mod = 1;
- }
- tick +=floor((millis() - ptime)/10) * mod;
+ tick +=floor((millis() - ptime)/10);
  ptime = millis();
 }
 
-void spawnenemies(){
-  for(int i=0; i< 9; i++){
-    enemylist.add(new Enemy(0,5000*i,p1));
-  }
-  for(int i=0; i< 9; i++){
-    enemylist.add(new Enemy(5000*i,0,p1));
-  }
-  for(int i=0; i< 9; i++){
-    enemylist.add(new Enemy(5000*i,50000,p1));
-  }  
-  for(int i=0; i< 9; i++){
-    enemylist.add(new Enemy(50000,5000*i,p1));
-  }  
-}
+
 
 
 
@@ -80,7 +68,6 @@ void draw(){
   background(42);
   cam.move(p1.x,p1.y);
   camera(camMat, cam.x,cam.y,scale,scale);
-  image(testimage,0.0,0.0);
   for(int i=enemylist.size()-1;i>=0;i--){
      Enemy en = enemylist.get(i);
      en.updateVector(p1);
@@ -98,16 +85,21 @@ void draw(){
   p1.updatecds();
   p1.move(keyspressed);
   p1.render();
-
+  user.update(p1);
+  user.healthbar(cam);
+  user.cooldowns(cam);
+  spawn.randspawn(p1,enemylist);
 //  println("%i",frameRate);
 }
 
+
 void mousePressed(){
   if(mouseButton == LEFT && !p1.bAoncd && !p1.rolling && !p1.attacking && (tick - p1.aTick > p1.bAcd)){
+     oscP5.send(attack, myBroadcastLocation);
      float mpx = ((mouseX-(width/2))/scale)+p1.x;
      float mpy = ((mouseY-(height/2))/scale)+p1.y;
      p1.basicAttack(mpx,mpy);
-  }
+  } 
   
 }
 
@@ -126,10 +118,6 @@ void keyPressed(){
     keyspressed[3] = true;
   }
   if(keyCode ==TAB){
-    println("we have sent a signal!");
-    OscMessage lowpass = new OscMessage("/foo/notes");
-    lowpass.add(1);
-    oscP5.send(lowpass, myBroadcastLocation);
     keyspressed[4] = true;  
   }
   if(key == ' '){

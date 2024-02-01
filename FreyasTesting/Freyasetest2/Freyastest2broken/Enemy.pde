@@ -14,7 +14,7 @@ class Enemy{
    x = startingX;
    y = startingY;  
    r = 500;
-   speed = 10;
+   speed = 50;
    ptick=0;
    shouldRemove = false;
    updateVector(p1);
@@ -27,7 +27,8 @@ class Enemy{
   }
       
   void render(){
-    ellipse(x,y,r,r);
+//    ellipse(x,y,r,r);
+    image(asymbol,x-500,y-500);
   }
   
   void chase(){

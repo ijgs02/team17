@@ -26,6 +26,7 @@ Camera cam;
 PMatrix2D camMat = new PMatrix2D();
 
 void setup(){
+
  ellipseMode(RADIUS);
  size(1500,1000,P2D);
  x = width/2;
@@ -38,7 +39,7 @@ void setup(){
  player.resize(1000,1000);
  asymbol = loadImage("asymbol.png");
  asymbol.resize(1000,1000);
- p1 = new Player(5000,5000,player);
+ p1 = new Player(0,0,player);
  enemylist = new ArrayList<Enemy>();
  spawn = new Spawning();
  user = new UI(p1);
@@ -52,6 +53,7 @@ void setup(){
   attack.add(1);
   roll = new OscMessage("/foo/notes");
   roll.add(2);
+  loop();
 }
 
 void setticks(){
@@ -59,11 +61,19 @@ void setticks(){
  ptime = millis();
 }
 
-
-
-
+void restart(){
+  loop();
+  p1 = new Player(0,0,player);
+  enemylist = new ArrayList<Enemy>();
+  spawn = new Spawning();
+  user = new UI(p1);
+  cam = new Camera(x,y);
+  ptime = millis();
+  tick = 0;
+}
 
 void draw(){
+  if(!user.paused && !user.dead){
   setticks();
   background(42);
   cam.move(p1.x,p1.y);
@@ -88,8 +98,19 @@ void draw(){
   user.update(p1);
   user.healthbar(cam);
   user.cooldowns(cam);
+  user.score(cam);
   spawn.randspawn(p1,enemylist);
 //  println("%i",frameRate);
+  }
+  if(user.dead){
+     background(42);
+     camera(camMat, cam.x,cam.y,scale,scale);
+     user.deathscreen(cam); 
+   }
+  if(user.paused){
+     camera(camMat, cam.x,cam.y,scale,scale);
+     user.pausescreen(cam);
+  }
 }
 
 
@@ -117,8 +138,23 @@ void keyPressed(){
   if(key == 'd'){
     keyspressed[3] = true;
   }
+  if(key == 'r'){
+    if(user.dead||user.paused){
+      restart();
+    }
+  }
   if(keyCode ==TAB){
     keyspressed[4] = true;  
+  }
+  if(keyCode == ESC){
+    key = 0;
+    if(user.dead){
+      exit(); 
+    }
+    user.paused = !user.paused;
+    if(!user.paused){
+       loop();
+    }
   }
   if(key == ' '){
     p1.roll(keyspressed); 

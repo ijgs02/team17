@@ -39,7 +39,7 @@ class Player{
     ymom = 0.0;
     r = 500.0;
     points = 0; 
-    grace = 300;
+    grace = 100;
     vuln = true;
     bAoncd = false;
     attacking = false;
@@ -133,11 +133,7 @@ class Player{
     vuln = false;
     dTick = tick;
     println("you took damage! health remaining: ",health); 
-    
-    if(health<=0){
-      println("you died..");
-      exit();
-    }   
+       
   }
   
   void kill(int point){

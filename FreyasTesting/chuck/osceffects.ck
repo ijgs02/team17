@@ -2,58 +2,59 @@ OscIn oin;
 6449 => oin.port;
 OscMsg msg;
 oin.addAddress( "/foo/notes" );
+OscOut xmit;
+xmit.dest("processing",6500);
+xmit.start("/foo/notes");
+3 => xmit.add;
 
 
+global Gain gall => dac;
+0.5 => gall.gain;
+Event attack;
 
-fun int scale(int a, int sc[]) {
-  sc.cap() => int n; //number of degrees in scale
-  a/n => int o; //octave being requested, number of wraps
-  a%n => a; //wrap the note within first octave
-
-  if ( a<0 ) { //cover the negative border case
-    a + 12 => a;
-    o - 1 => o;
-  }
-  //each octave contributes 12 semitones, plus the scale
-  return o*12 + sc[a];
-}
-
-[0,0,6,0,6,7,0,6,0,4,0,5,5,4,3,4] @=> int mel[]; //sequence data
-[0,2,3,5,7,8,10,12] @=> int minor[]; //minor scale
+[220.0,249.94,277.18,293.66,329.63,369.99,415.3,440.0] @=> float notes[];
             
 spork ~beat();
+spork ~riff(attack);
 
 fun void beat(){
-   SawOsc i => Gain g1 => LPF lf => ADSR en => dac;
+   SawOsc i => Gain g1 => LPF lf => ADSR en => global Gain gall;
    1.2 => g1.gain;
    en.set(10::ms, 50::ms,0.3, 500::ms);
    lf.set(150,0.8);
    110 => i.freq;
    while(true){
      en.keyOn();
+ //    xmit.send();
      100:: ms => now;
      en.keyOff();
      500::ms =>now;
+     xmit.dest("processing",6500);
+     xmit.start("/foo/notes");
+     3 => xmit.add;
+
    }   
 }
 
-fun void riff(){
+fun void riff(Event attack){
+  while(true){
    150::ms => dur T;
  //  T - (now % T) => now;
-   StifKarp inst=>SinOsc overdrive=>Gain g=>LPF l => ADSR e => dac;
+   TriOsc source =>SinOsc overdrive=>Gain g=>LPF l => ADSR e => dac;
    1 => overdrive.sync;
-   1.1 => g.gain;
-   500 => l.freq;
-   e.set( 10::ms, 8::ms, .5, 500::ms );
-   e.keyOn();
+   1 => overdrive.gain;
+   2 => g.gain;
+   150 => l.freq;
+   e.set( 1::ms, 8::ms, .5, 500::ms );
+   attack => now;
    for (0=>int i;i<2 ; i++) {
-     Std.mtof(  3*12 + 9 + scale( mel[Math.random2(0,15)], minor )) => inst.freq; //set the note
-     inst.noteOn( 1 ); //play a note at half volume
-     T => now; //compute audio for 0.3 sec
+      e.keyOn();
+      notes[Math.random2(0,7)] => source.freq;    
+      T => now; //compute audio for 0.3 sec
   }
   e.keyOff();
-  3::second => now;
 
+ }
 }
 
 while(true){
@@ -65,7 +66,7 @@ while(true){
     msg.getInt(0) => i;
 
     if(i == 1){        
-        spork ~ riff();
+        attack.signal();
     }
     if(i == 2){   
     }

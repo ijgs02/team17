@@ -189,6 +189,11 @@ void keyReleased(){
   }
 }
 
+void oscEvent(OscMessage themessage){
+  themessage.print();
+  
+}
+
 
 PVector translation(PMatrix2D m, PVector out){
   return out.set(m.m02,m.m12,0.0);

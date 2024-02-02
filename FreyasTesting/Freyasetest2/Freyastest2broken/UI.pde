@@ -31,14 +31,14 @@ class UI{
   void healthbar(Camera cam){
     for(int i=0;i<health;i++){
        fill(0,255,255);
-       ellipse(cam.x - 7200,cam.y-4700 + i*750,250,250);
+       ellipse(cam.x - 720/scale,cam.y-470/scale + i*75/scale,25/scale,25/scale);
     }
   } 
   
   void score(Camera cam){
     textAlign(CENTER);
     textSize(1000);
-    text( score,cam.x,cam.y+4700);
+    text( score,cam.x,cam.y+470/scale);
   }
   
   void deathscreen(Camera cam){
@@ -48,7 +48,7 @@ class UI{
   void pausescreen(Camera cam){  
     text("Paused", cam.x,cam.y);
     textSize(200);
-    text("press r to restart", cam.x, cam.y+500);
+    text("press r to restart", cam.x, cam.y+50/scale);
     textSize(1000);
     noLoop();
   }
@@ -59,14 +59,14 @@ class UI{
       aBright = 1;
     }
     fill((int)((float)255*aBright),0,0);
-    rect(cam.x + 7200,cam.y-4700,250,250);
+    rect(cam.x + 720/scale,cam.y-470/scale,25/scale,25/scale);
     
     float rBright = ((float)(tick - rollstart))/(float)Rcd;
     if(rBright>1){
       rBright = 1;
     }
     fill(0,0,(int)((float)255*rBright));
-    rect(cam.x + 7200,cam.y-4700 + 750,250,250);
+    rect(cam.x + 720/scale,cam.y-470/scale + 75/scale,25/scale,25/scale);
       
   }
 }

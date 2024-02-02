@@ -10,8 +10,10 @@ import processing.awt.PGraphicsJava2D;
 Player p1;
 Spawning spawn;
 UI user;
+public levelManager management;
+
 float x,y;
-float scale;
+public float scale;
 boolean[] keyspressed = new boolean[5];
 long ptime;
 public long tick;
@@ -31,7 +33,7 @@ void setup(){
  size(1500,1000,P2D);
  x = width/2;
  y = height/2;
- scale = .1;
+ scale = .05;
  cam = new Camera(x,y);
  ptime = millis();
  tick = 0;
@@ -40,6 +42,7 @@ void setup(){
  asymbol = loadImage("asymbol.png");
  asymbol.resize(1000,1000);
  p1 = new Player(0,0,player);
+ management = new levelManager();
  enemylist = new ArrayList<Enemy>();
  spawn = new Spawning();
  user = new UI(p1);
@@ -63,13 +66,14 @@ void setticks(){
 
 void restart(){
   loop();
+  tick = 0;
+  management = new levelManager();
   p1 = new Player(0,0,player);
   enemylist = new ArrayList<Enemy>();
   spawn = new Spawning();
   user = new UI(p1);
   cam = new Camera(x,y);
   ptime = millis();
-  tick = 0;
 }
 
 void draw(){
@@ -82,7 +86,6 @@ void draw(){
      Enemy en = enemylist.get(i);
      en.updateVector(p1);
      en.chase();
-//     en.move();
      en.collideTest(p1);
      if(en.shouldRemove){
        enemylist.remove(en);
@@ -101,6 +104,8 @@ void draw(){
   user.score(cam);
   spawn.randspawn(p1,enemylist);
 //  println("%i",frameRate);
+  management.checknext();
+  
   }
   if(user.dead){
      background(42);
@@ -116,6 +121,7 @@ void draw(){
 
 void mousePressed(){
   if(mouseButton == LEFT && !p1.bAoncd && !p1.rolling && !p1.attacking && (tick - p1.aTick > p1.bAcd)){
+     println("click registered");   
      oscP5.send(attack, myBroadcastLocation);
      float mpx = ((mouseX-(width/2))/scale)+p1.x;
      float mpy = ((mouseY-(height/2))/scale)+p1.y;

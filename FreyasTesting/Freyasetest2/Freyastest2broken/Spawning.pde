@@ -6,46 +6,49 @@ class Spawning{
   
   Spawning(){ 
     pspawn = 0;
-    spawncd = 500;
+    spawncd = 100;
   }
   
   
   void randspawn(Player p1, ArrayList<Enemy> enemylist){
 
     if(tick-pspawn > spawncd){
+      
+       spawncd = management.currentlevel.morespawns;
        int r =abs(rand.nextInt())%4;
        println(r);
        int x = 0;
        int y = 0;
        switch(r){
          case 0:
-           x = rand.nextInt()%15000;
-           y = -8000;
+           x = (rand.nextInt()%1500 - 750) * 40;
+           y = -600*40;
            break;
          case 1:
-           x = -10000;
-           y = rand.nextInt()%10000;
+           x = -800*40;
+           y = (rand.nextInt()%1000 - 500)* 40;
            break;
          case 2:
-           x =rand.nextInt()%15000;
-           y = 8000;
+           x = (rand.nextInt()%1500-750)*40;
+           y = 600*40;
            break;
          case 3:
-           x = 10000;
-           y = rand.nextInt()%10000;
+           x = 800*40;
+           y = (rand.nextInt()%1000-500)*40;
            break;
        }
        println(x,y);
-       enemylist.add(new Enemy((int)(p1.x+x),(int)(p1.y+y),p1));
+       enemylist.add(new Enemy((int)(p1.x+x),(int)(p1.y+y),p1,management ));
        println(" A new Challenger approaches");
        pspawn = tick;
     }
   }
   
   void addenemy(ArrayList<Enemy> enemylist, int x, int y){
-     enemylist.add(new Enemy(x,y,p1));
+     enemylist.add(new Enemy(x,y,p1,management));
+     
   }
-  
+ /* 
   void firstspawn(ArrayList<Enemy> enemylist){
     int dist = 2500;
     for(int i=0; i< 9; i++){
@@ -61,6 +64,6 @@ class Spawning{
       enemylist.add(new Enemy(dist*10,dist*i,p1));
     }  
   }
- 
+ */
  
 }

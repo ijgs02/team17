@@ -40,9 +40,10 @@ fun void beat(){
 fun void riff(){
    150::ms => dur T;
  //  T - (now % T) => now;
-   StifKarp inst=>SinOsc overdrive=>LPF l =>Gain g=> ADSR e => dac;
+   StifKarp inst=>SinOsc overdrive=>Gain g=>LPF l => ADSR e => dac;
    1 => overdrive.sync;
-   1.5 => g.gain;
+   1.1 => g.gain;
+   500 => l.freq;
    e.set( 10::ms, 8::ms, .5, 500::ms );
    e.keyOn();
    for (0=>int i;i<2 ; i++) {

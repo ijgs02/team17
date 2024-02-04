@@ -2,9 +2,10 @@ import oscP5.*;
 import netP5.*;
 import java.util.Random;
 OscP5 oscP5;
-NetAddress myBroadcastLocation;
+NetAddress myBroadcastLocationAttack;
+NetAddress myBroadcastLocationKill;
 OscMessage attack;
-OscMessage roll;
+OscMessage kill;
 import processing.awt.PGraphicsJava2D;
 
 Player p1;
@@ -51,11 +52,12 @@ void setup(){
  frameRate(50);
  
   oscP5 = new OscP5(this, 6500);
-  myBroadcastLocation = new NetAddress("127.0.0.1", 6449);
+  myBroadcastLocationAttack = new NetAddress("127.0.0.1", 6449);
+  myBroadcastLocationKill = new NetAddress("127.0.0.1", 6448);
   attack = new OscMessage("/foo/notes");
   attack.add(1);
-  roll = new OscMessage("/foo/notes");
-  roll.add(2);
+  kill = new OscMessage("/foo/notes2");
+  kill.add(2);
   loop();
 }
 
@@ -89,6 +91,7 @@ void draw(){
      en.collideTest(p1);
      if(en.shouldRemove){
        enemylist.remove(en);
+
      }
      else{
        en.render();
@@ -122,7 +125,7 @@ void draw(){
 void mousePressed(){
   if(mouseButton == LEFT && !p1.bAoncd && !p1.rolling && !p1.attacking && (tick - p1.aTick > p1.bAcd)){
      println("click registered");   
-     oscP5.send(attack, myBroadcastLocation);
+     oscP5.send(attack, myBroadcastLocationAttack);
      float mpx = ((mouseX-(width/2))/scale)+p1.x;
      float mpy = ((mouseY-(height/2))/scale)+p1.y;
      p1.basicAttack(mpx,mpy);
@@ -179,13 +182,6 @@ void keyReleased(){
   }
   if(key == 'd'){
     keyspressed[3] = false;
-  }
-   if(keyCode ==TAB){
-    OscMessage lowpass = new OscMessage("/foo/notes");
-    lowpass.add(2);
-    println("we have sent a signal! %s");
-    oscP5.send(lowpass, myBroadcastLocation);     
-    keyspressed[4] = false;
   }
 }
 

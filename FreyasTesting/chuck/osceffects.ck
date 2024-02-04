@@ -1,7 +1,13 @@
-OscIn oin;
-6449 => oin.port;
-OscMsg msg;
-oin.addAddress( "/foo/notes" );
+OscIn attack;
+6449 => attack.port;
+OscMsg msg1;
+attack.addAddress( "/foo/notes" );
+
+OscIn akill;
+6448 => akill.port;
+OscMsg msg2;
+akill.addAddress( "/foo/notes2" );
+
 OscOut xmit;
 xmit.dest("processing",6500);
 xmit.start("/foo/notes");
@@ -9,17 +15,20 @@ xmit.start("/foo/notes");
 
 
 global Gain gall => dac;
-0.5 => gall.gain;
-Event attack;
+0.8 => gall.gain;
 
 [220.0,249.94,277.18,293.66,329.63,369.99,415.3,440.0] @=> float notes[];
             
-spork ~beat();
-spork ~riff(attack);
+spork ~ beat();
+spork ~ attacksearch();
+spork ~ killsearch();
+
+Event a;
+a=>now;
 
 fun void beat(){
    SawOsc i => Gain g1 => LPF lf => ADSR en => global Gain gall;
-   1.2 => g1.gain;
+   0.4 => g1.gain;
    en.set(10::ms, 50::ms,0.3, 500::ms);
    lf.set(150,0.8);
    110 => i.freq;
@@ -36,40 +45,60 @@ fun void beat(){
    }   
 }
 
-fun void riff(Event attack){
-  while(true){
-   150::ms => dur T;
- //  T - (now % T) => now;
-   TriOsc source =>SinOsc overdrive=>Gain g=>LPF l => ADSR e => dac;
+fun void riff(){
+   TriOsc source =>SinOsc overdrive=>Gain g=>LPF l => ADSR e =>global Gain gall;
    1 => overdrive.sync;
    1 => overdrive.gain;
-   2 => g.gain;
+   1 => g.gain;
    150 => l.freq;
    e.set( 1::ms, 8::ms, .5, 500::ms );
-   attack => now;
+
    for (0=>int i;i<2 ; i++) {
       e.keyOn();
       notes[Math.random2(0,7)] => source.freq;    
-      T => now; //compute audio for 0.3 sec
+      150::ms => now; //compute audio for 0.3 sec
   }
   e.keyOff();
+  400::ms=>now;
 
- }
 }
 
-while(true){
-    float i;
+fun void kill(){
+  SqrOsc k => LPF lf => HPF hf => ADSR en =>  global Gain gall;
+  en.set(10::ms, 50::ms,0.5, 400::ms);
+  lf.set(150,0.4);
+  hf.set(1000,0.8);
+  3 => k.gain;
+  150::ms => dur T;
+  T-(now%T) => now;
+  en.keyOn();
+  notes[Math.random2(0,7)]*2 => k.freq;
+  1::ms => now;
+  en.keyOff();
+  74::ms => now; 
+}
 
-    oin => now;
+fun void attacksearch(){
+  while(true){
+
+    attack => now;
     
-    oin.recv(msg);
-    msg.getInt(0) => i;
+    attack.recv(msg1);
+    
+    spork ~ riff();
 
-    if(i == 1){        
-        attack.signal();
-    }
-    if(i == 2){   
-    }
+  }
 }
 
+fun void killsearch(){
+  while(true){
+
+    akill => now;
+    
+    akill.recv(msg2);
+  
+    spork ~ kill();
+
+  }
+}
 

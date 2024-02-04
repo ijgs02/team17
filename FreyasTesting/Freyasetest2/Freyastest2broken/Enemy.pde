@@ -68,6 +68,7 @@ class Enemy{
       p1.ymom -= dely * 1/dist * bounce ;
       if(p1.rolling || p1.attacking){
          shouldRemove = true;
+         oscP5.send(kill, myBroadcastLocationKill);
          p1.kill(1);
          return;
       }

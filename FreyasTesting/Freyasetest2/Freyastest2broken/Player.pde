@@ -57,13 +57,6 @@ class Player{
   }
   
   void render(){
-    if(attacking){
-      fill(255,0,0);
-    }
-    if(rolling){
-      fill(0,255,255);
-    }
-//    ellipse(x,y,r,r);
     fill(255);
     if (xmom > 0 && (ymom >= 0 || ymom < 0)) {
        counter++;
@@ -71,7 +64,7 @@ class Player{
          player = playerRightWalk1; 
        }
        if (counter % 5 == 0) {
-       println("anim update");
+  //     println("anim update");
        if (player == playerRightWalk1) {
           player = playerRightWalk2; 
           counter = 0;
@@ -90,7 +83,7 @@ class Player{
          player = playerLeftWalk1; 
        }
        if (counter % 5 == 0) {
-       println("anim update");
+    //   println("anim update");
        if (player == playerLeftWalk1) {
           player = playerLeftWalk2; 
           counter = 0;

@@ -1,5 +1,5 @@
-//import oscP5.*;
-//import netP5.*;
+import oscP5.*;
+import netP5.*;
 import java.util.Random;
 OscP5 oscP5;
 NetAddress myBroadcastLocationAttack;
@@ -72,16 +72,15 @@ void setup(){
  spawn = new Spawning();
  user = new UI(p1);
 
-// spawn.firstspawn(enemylist);
-//
  frameRate(50);
  
   oscP5 = new OscP5(this, 6500);
-  myBroadcastLocation = new NetAddress("127.0.0.1", 6449);
+  myBroadcastLocationAttack = new NetAddress("127.0.0.1", 6449);
+  myBroadcastLocationKill = new NetAddress("127.0.0.1", 6448);
   attack = new OscMessage("/foo/notes");
   attack.add(1);
-  roll = new OscMessage("/foo/notes");
-  roll.add(2);
+  kill = new OscMessage("/foo/notes2");
+  kill.add(2);
   loop();
 }
 
@@ -175,7 +174,7 @@ void mousePressed(){
 void updateAnim() {
   
   if (counter % 100 == 50) {
-    println("anim update");
+//    println("anim update");
      if (player == playerRightWalk1) {
         player = playerRightWalk2; 
         counter = 0;

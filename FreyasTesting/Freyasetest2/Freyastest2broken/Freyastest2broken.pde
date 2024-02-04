@@ -1,11 +1,12 @@
-import oscP5.*;
-import netP5.*;
+//import oscP5.*;
+//import netP5.*;
 import java.util.Random;
 OscP5 oscP5;
 NetAddress myBroadcastLocationAttack;
 NetAddress myBroadcastLocationKill;
 OscMessage attack;
 OscMessage kill;
+
 import processing.awt.PGraphicsJava2D;
 
 Player p1;
@@ -14,15 +15,24 @@ UI user;
 public levelManager management;
 
 float x,y;
+int counter = 0;
 public float scale;
 boolean[] keyspressed = new boolean[5];
 long ptime;
 public long tick;
 ArrayList<Enemy> enemylist;
+ArrayList<Projectile> projectilelist;
 
 PImage testimage;
 PImage player;
+PImage playerRightWalk1;
+PImage playerRightWalk2;
+PImage playerRightWalk3;
+PImage playerLeftWalk1;
+PImage playerLeftWalk2;
+PImage playerLeftWalk3;
 PImage asymbol;
+ParticleSystem ps;
 Random rand = new Random();
 
 Camera cam;
@@ -38,26 +48,40 @@ void setup(){
  cam = new Camera(x,y);
  ptime = millis();
  tick = 0;
- player = loadImage("atsymbol.png");
+ 
+ // player images for animation
+ playerRightWalk1 = loadImage("walk_r_1.png"); 
+ playerRightWalk1.resize(1000,1000);
+ playerRightWalk2 = loadImage("walk_r_2.png");
+ playerRightWalk2.resize(1000,1000);
+ playerRightWalk3 = loadImage("walk_r_3.png");
+ playerRightWalk3.resize(1000,1000);
+ playerLeftWalk1 = loadImage("walk_l_1.png"); 
+ playerLeftWalk1.resize(1000,1000);
+ playerLeftWalk2 = loadImage("walk_l_2.png");
+ playerLeftWalk2.resize(1000,1000);
+ playerLeftWalk3 = loadImage("walk_l_3.png");
+ player = playerRightWalk1;
  player.resize(1000,1000);
  asymbol = loadImage("asymbol.png");
  asymbol.resize(1000,1000);
  p1 = new Player(0,0,player);
  management = new levelManager();
  enemylist = new ArrayList<Enemy>();
+ projectilelist = new ArrayList<Projectile>();
  spawn = new Spawning();
  user = new UI(p1);
+
 // spawn.firstspawn(enemylist);
 //
  frameRate(50);
  
   oscP5 = new OscP5(this, 6500);
-  myBroadcastLocationAttack = new NetAddress("127.0.0.1", 6449);
-  myBroadcastLocationKill = new NetAddress("127.0.0.1", 6448);
+  myBroadcastLocation = new NetAddress("127.0.0.1", 6449);
   attack = new OscMessage("/foo/notes");
   attack.add(1);
-  kill = new OscMessage("/foo/notes2");
-  kill.add(2);
+  roll = new OscMessage("/foo/notes");
+  roll.add(2);
   loop();
 }
 
@@ -67,11 +91,13 @@ void setticks(){
 }
 
 void restart(){
+  
   loop();
   tick = 0;
   management = new levelManager();
   p1 = new Player(0,0,player);
   enemylist = new ArrayList<Enemy>();
+  projectilelist = new ArrayList<Projectile>();
   spawn = new Spawning();
   user = new UI(p1);
   cam = new Camera(x,y);
@@ -79,24 +105,36 @@ void restart(){
 }
 
 void draw(){
+  
+  
   if(!user.paused && !user.dead){
   setticks();
   background(42);
   cam.move(p1.x,p1.y);
   camera(camMat, cam.x,cam.y,scale,scale);
   for(int i=enemylist.size()-1;i>=0;i--){
-     Enemy en = enemylist.get(i);
-     en.updateVector(p1);
-     en.chase();
-     en.collideTest(p1);
-     if(en.shouldRemove){
-       enemylist.remove(en);
-
+     Enemy enemy = enemylist.get(i);
+     enemy.updateVector(p1);
+     enemy.chase();
+     enemy.collideTest(p1);
+     if(enemy.shouldRemove){
+       enemylist.remove(enemy);  
      }
      else{
-       en.render();
+       enemy.render();
      }
   } 
+  for (int i = projectilelist.size() - 1; i >= 0; i-- ) {
+     Projectile p = projectilelist.get(i);
+     p.move();
+     if (p.shouldDestroy) {
+        projectilelist.remove(p); 
+     } else {
+         fill(0, 255, 0);
+         ellipse(p.originX, p.originY, p.w, p.h);
+     }
+    
+  }
   
   p1.updatecds();
   p1.move(keyspressed);
@@ -119,6 +157,7 @@ void draw(){
      camera(camMat, cam.x,cam.y,scale,scale);
      user.pausescreen(cam);
   }
+  
 }
 
 
@@ -133,10 +172,29 @@ void mousePressed(){
   
 }
 
+void updateAnim() {
+  
+  if (counter % 100 == 50) {
+    println("anim update");
+     if (player == playerRightWalk1) {
+        player = playerRightWalk2; 
+        counter = 0;
+     } else if (player == playerRightWalk2) {
+        player = playerRightWalk3; 
+        counter = 0;
+     } else if (player == playerRightWalk3) {
+        player = playerRightWalk1; 
+        counter = 0;
+     }
+  }
+  counter++;
+}
+
 
 void keyPressed(){
   if(key == 'w'){
     keyspressed[0] = true;
+    updateAnim();
   }
   if(key == 'a'){
     keyspressed[1] = true;
@@ -185,10 +243,10 @@ void keyReleased(){
   }
 }
 
-void oscEvent(OscMessage themessage){
-  themessage.print();
+//void oscEvent(OscMessage themessage){
+//  themessage.print();
   
-}
+//}
 
 
 PVector translation(PMatrix2D m, PVector out){

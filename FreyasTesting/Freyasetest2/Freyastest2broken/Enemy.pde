@@ -17,6 +17,8 @@ class Enemy{
   int colg;
   int colb;
   
+  ParticleSystem ps;
+  
   Enemy(int startingX, int startingY,Player p1,levelManager management){
    x = startingX;
    y = startingY;  
@@ -61,7 +63,7 @@ class Enemy{
   
 //Still only works for if the player is smaller than the object, we need to make another one for if the object is smaller. 
   void collideTest(Player p1){
-
+    
     if(dist < (r + p1.r)){
       //Collision detected
       p1.xmom -= delx * 1/dist * bounce ;

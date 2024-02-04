@@ -29,6 +29,8 @@ class Player{
   int bAcd;
   long aTick;
   int bAlen;
+  
+  int animCounter = 0;
 
   PImage player;
   
@@ -63,6 +65,44 @@ class Player{
     }
 //    ellipse(x,y,r,r);
     fill(255);
+    if (xmom > 0 && (ymom >= 0 || ymom < 0)) {
+       counter++;
+       if (player == playerLeftWalk1 || player == playerLeftWalk2 || player == playerLeftWalk3) {
+         player = playerRightWalk1; 
+       }
+       if (counter % 5 == 0) {
+       println("anim update");
+       if (player == playerRightWalk1) {
+          player = playerRightWalk2; 
+          counter = 0;
+       } else if (player == playerRightWalk2) {
+          player = playerRightWalk3; 
+          counter = 0;
+       } else if (player == playerRightWalk3) {
+          player = playerRightWalk1; 
+          counter = 0;
+       }
+      } 
+     }
+     if (xmom < 0 && (ymom >= 0 || ymom < 0)) {
+       counter++;
+       if (player == playerRightWalk1 || player == playerRightWalk2 || player == playerRightWalk3) {
+         player = playerLeftWalk1; 
+       }
+       if (counter % 5 == 0) {
+       println("anim update");
+       if (player == playerLeftWalk1) {
+          player = playerLeftWalk2; 
+          counter = 0;
+       } else if (player == playerLeftWalk2) {
+          player = playerLeftWalk3; 
+          counter = 0;
+       } else if (player == playerLeftWalk3) {
+          player = playerLeftWalk1; 
+          counter = 0;
+       }
+      } 
+     }
 
     image(player,x-500,y-500);
   }
@@ -70,7 +110,6 @@ class Player{
   void move(boolean[] keyspressed){
     //i think we might need vector/momementum based movement 
     //momemtum mode???
-
     x +=xmom;
     y +=ymom;
     if(!rolling){

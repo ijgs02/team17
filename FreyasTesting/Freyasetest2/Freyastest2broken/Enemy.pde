@@ -16,13 +16,20 @@ class Enemy{
   int colr;
   int colg;
   int colb;
-  
+  PImage enemyImage1;
+  PImage enemyImage2;
+  PImage enemyImage;
+  int animCounter;
   ParticleSystem ps;
   
   Enemy(int startingX, int startingY,Player p1,levelManager management){
    x = startingX;
-   y = startingY;  
+   y = startingY;
+   enemyImage1 = loadImage("enemy_walk_1.png");
+   enemyImage2 = loadImage("enemy_walk_2.png");
+   enemyImage = enemyImage1;
    ptick=0;
+   animCounter = 0;
    shouldRemove = false;
    characterattributes(management);
    updateVector(p1);
@@ -50,7 +57,7 @@ class Enemy{
      noFill();
      strokeWeight(10);
      ellipse(x,y,r,r);
-//    image(asymbol,x-500,y-500);
+    image(asymbol,x-500,y-500);
      fill(colr,colg,colb);
      text(character,x,y+r/2);
   }
@@ -70,7 +77,7 @@ class Enemy{
       p1.ymom -= dely * 1/dist * bounce ;
       if(p1.rolling || p1.attacking){
          shouldRemove = true;
-         oscP5.send(kill, myBroadcastLocationKill);
+         //oscP5.send(kill, myBroadcastLocationKill);
          p1.kill(1);
          return;
       }

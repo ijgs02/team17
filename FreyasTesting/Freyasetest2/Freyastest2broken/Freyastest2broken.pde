@@ -1,11 +1,11 @@
-import oscP5.*;
-import netP5.*;
+//import oscP5.*;
+//import netP5.*;
 import java.util.Random;
-OscP5 oscP5;
-NetAddress myBroadcastLocationAttack;
-NetAddress myBroadcastLocationKill;
-OscMessage attack;
-OscMessage kill;
+//OscP5 oscP5;
+//NetAddress myBroadcastLocationAttack;
+//NetAddress myBroadcastLocationKill;
+//OscMessage attack;
+//OscMessage kill;
 
 import processing.awt.PGraphicsJava2D;
 
@@ -32,9 +32,14 @@ PImage playerLeftWalk1;
 PImage playerLeftWalk2;
 PImage playerLeftWalk3;
 PImage asymbol;
+PImage enemyImage1;
+  PImage enemyImage2;
+  PImage enemyImage;
+  
 ParticleSystem ps;
 Random rand = new Random();
 
+int animCounter;
 Camera cam;
 PMatrix2D camMat = new PMatrix2D();
 
@@ -48,7 +53,10 @@ void setup(){
  cam = new Camera(x,y);
  ptime = millis();
  tick = 0;
- 
+ enemyImage1 = loadImage("enemy_walk_1.png");
+ enemyImage2 = loadImage("enemy_walk_2.png");
+ enemyImage = enemyImage1;
+ animCounter = 0;
  // player images for animation
  playerRightWalk1 = loadImage("walk_r_1.png"); 
  playerRightWalk1.resize(1000,1000);
@@ -74,13 +82,13 @@ void setup(){
 
  frameRate(50);
  
-  oscP5 = new OscP5(this, 6500);
-  myBroadcastLocationAttack = new NetAddress("127.0.0.1", 6449);
-  myBroadcastLocationKill = new NetAddress("127.0.0.1", 6448);
-  attack = new OscMessage("/foo/notes");
-  attack.add(1);
-  kill = new OscMessage("/foo/notes2");
-  kill.add(2);
+  //oscP5 = new OscP5(this, 6500);
+  //myBroadcastLocationAttack = new NetAddress("127.0.0.1", 6449);
+  //myBroadcastLocationKill = new NetAddress("127.0.0.1", 6448);
+  //attack = new OscMessage("/foo/notes");
+  //attack.add(1);
+  //kill = new OscMessage("/foo/notes2");
+  //kill.add(2);
   loop();
 }
 
@@ -104,7 +112,15 @@ void restart(){
 }
 
 void draw(){
-  
+  if (animCounter == 5) {
+      if (enemyImage == enemyImage1) {
+         enemyImage = enemyImage2; 
+      } else if (enemyImage == enemyImage2) {
+         enemyImage = enemyImage1; 
+      }
+       animCounter = 0; 
+    }
+    animCounter++;
   
   if(!user.paused && !user.dead){
   setticks();
@@ -120,7 +136,7 @@ void draw(){
        enemylist.remove(enemy);  
      }
      else{
-       enemy.render();
+       image(enemyImage, enemy.x - 500, enemy.y - 500);
      }
   } 
   for (int i = projectilelist.size() - 1; i >= 0; i-- ) {
@@ -163,7 +179,7 @@ void draw(){
 void mousePressed(){
   if(mouseButton == LEFT && !p1.bAoncd && !p1.rolling && !p1.attacking && (tick - p1.aTick > p1.bAcd)){
      println("click registered");   
-     oscP5.send(attack, myBroadcastLocationAttack);
+     //oscP5.send(attack, myBroadcastLocationAttack);
      float mpx = ((mouseX-(width/2))/scale)+p1.x;
      float mpy = ((mouseY-(height/2))/scale)+p1.y;
      p1.basicAttack(mpx,mpy);

@@ -25,9 +25,6 @@ class Enemy{
   Enemy(int startingX, int startingY,Player p1,levelManager management){
    x = startingX;
    y = startingY;
-   enemyImage1 = loadImage("enemy_walk_1.png");
-   enemyImage2 = loadImage("enemy_walk_2.png");
-   enemyImage = enemyImage1;
    ptick=0;
    animCounter = 0;
    shouldRemove = false;
@@ -54,12 +51,12 @@ class Enemy{
   } 
       
   void render(){
-     noFill();
-     strokeWeight(10);
-     ellipse(x,y,r,r);
-    image(asymbol,x-500,y-500);
-     fill(colr,colg,colb);
-     text(character,x,y+r/2);
+    // noFill();
+    // strokeWeight(10);
+    // ellipse(x,y,r,r);
+    //image(asymbol,x-500,y-500);
+    // fill(colr,colg,colb);
+    // text(character,x,y+r/2);
   }
   
   void chase(){

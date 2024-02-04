@@ -4,7 +4,7 @@ class Player{
   float x;
   float y;
   float r;
-  float control = 10;
+  float control = 1;
   float xmom;
   float ymom;
 
@@ -39,7 +39,7 @@ class Player{
     y = startingY;
     xmom = 0.0;
     ymom = 0.0;
-    r = 500.0;
+    r = 50.0;
     points = 0; 
     grace = 100;
     vuln = true;
@@ -49,7 +49,7 @@ class Player{
     aTick = 0;
     bAcd = 75;
     bAlen = 20;
-    rollboost =30;
+    rollboost =3;
     rolllength = 50;
     Rcd = 100;
     player = inplayer;
@@ -97,12 +97,10 @@ class Player{
       } 
      }
 
-    image(player,x-500,y-500);
+    image(player,x-50,y-50);
   }
   
   void move(boolean[] keyspressed){
-    //i think we might need vector/momementum based movement 
-    //momemtum mode???
     x +=xmom;
     y +=ymom;
     if(!rolling){

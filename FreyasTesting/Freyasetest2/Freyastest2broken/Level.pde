@@ -38,10 +38,10 @@ class Level{
   
   void extractinfo(int leveldisc){
      if((1&leveldisc)>0){
-       bounce = 200;
+       bounce = 20;
      }
      else{
-       bounce = 100;
+       bounce = 10;
      }
      if((2&leveldisc)>0){
        doubledamage = 2;

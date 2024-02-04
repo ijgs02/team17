@@ -29,13 +29,13 @@ class Enemy{
   }
   
   void characterattributes(levelManager management){
-    speed = 50*management.currentlevel.fast;
+    speed = 5*management.currentlevel.fast;
     colr = management.currentlevel.colr;
     colg = management.currentlevel.colg;
     colb = management.currentlevel.colb;
     bounce = management.currentlevel.bounce;
     damage = management.currentlevel.doubledamage;
-    r = 500;
+    r = 50;
     character = management.currentlevel.character;
   }
 
@@ -68,13 +68,16 @@ class Enemy{
       //Collision detected
       p1.xmom -= delx * 1/dist * bounce ;
       p1.ymom -= dely * 1/dist * bounce ;
+      println("collision detected");
       if(p1.rolling || p1.attacking){
+         println("time to kill the object");
          shouldRemove = true;
          oscP5.send(kill, myBroadcastLocationKill);
          p1.kill(1);
          return;
       }
       if(p1.vuln){
+        println("time to kill the player",p1.attacking);
         p1.damaged(1);
       }
     }

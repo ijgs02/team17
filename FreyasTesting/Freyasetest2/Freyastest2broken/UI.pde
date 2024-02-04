@@ -37,7 +37,7 @@ class UI{
   
   void score(Camera cam){
     textAlign(CENTER);
-    textSize(1000);
+    textSize(100);
     text( score,cam.x,cam.y+470/scale);
   }
   
@@ -47,9 +47,9 @@ class UI{
   
   void pausescreen(Camera cam){  
     text("Paused", cam.x,cam.y);
-    textSize(200);
+    textSize(50);
     text("press r to restart", cam.x, cam.y+50/scale);
-    textSize(1000);
+    textSize(100);
     noLoop();
   }
   

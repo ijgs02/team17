@@ -10,8 +10,8 @@ class Projectile {
      direction = mouseVector.copy();
      originX = x;
      originY = y;
-     w = 100;
-     h = 100;
+     w = 10;
+     h = 10;
      duration = 1000;
      shouldDestroy = false;
   }

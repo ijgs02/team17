@@ -21,20 +21,20 @@ class Spawning{
        int y = 0;
        switch(r){
          case 0:
-           x = (rand.nextInt()%1500 - 750) * 40;
-           y = -600*40;
+           x = (rand.nextInt()%1500 - 750) * 4;
+           y = -600*4;
            break;
          case 1:
-           x = -800*40;
-           y = (rand.nextInt()%1000 - 500)* 40;
+           x = -800*4;
+           y = (rand.nextInt()%1000 - 500)* 4;
            break;
          case 2:
-           x = (rand.nextInt()%1500-750)*40;
-           y = 600*40;
+           x = (rand.nextInt()%1500-750)*4;
+           y = 600*4;
            break;
          case 3:
-           x = 800*40;
-           y = (rand.nextInt()%1000-500)*40;
+           x = 800*4;
+           y = (rand.nextInt()%1000-500)*4;
            break;
        }
        println(x,y);

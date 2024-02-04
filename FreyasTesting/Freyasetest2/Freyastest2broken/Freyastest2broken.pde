@@ -12,6 +12,7 @@ import processing.awt.PGraphicsJava2D;
 Player p1;
 Spawning spawn;
 UI user;
+BackManager background;
 public levelManager management;
 
 float x,y;
@@ -24,6 +25,7 @@ ArrayList<Enemy> enemylist;
 ArrayList<Projectile> projectilelist;
 
 PImage testimage;
+PImage backgroundtile;
 PImage player;
 PImage playerRightWalk1;
 PImage playerRightWalk2;
@@ -44,33 +46,38 @@ void setup(){
  size(1500,1000,P2D);
  x = width/2;
  y = height/2;
- scale = .05;
+ scale = .5;
  cam = new Camera(x,y);
  ptime = millis();
  tick = 0;
  
  // player images for animation
  playerRightWalk1 = loadImage("walk_r_1.png"); 
- playerRightWalk1.resize(1000,1000);
+ playerRightWalk1.resize(100,100);
  playerRightWalk2 = loadImage("walk_r_2.png");
- playerRightWalk2.resize(1000,1000);
+ playerRightWalk2.resize(100,100);
  playerRightWalk3 = loadImage("walk_r_3.png");
- playerRightWalk3.resize(1000,1000);
+ playerRightWalk3.resize(100,100);
  playerLeftWalk1 = loadImage("walk_l_1.png"); 
- playerLeftWalk1.resize(1000,1000);
+ playerLeftWalk1.resize(100,100);
  playerLeftWalk2 = loadImage("walk_l_2.png");
- playerLeftWalk2.resize(1000,1000);
+ playerLeftWalk2.resize(100,100);
  playerLeftWalk3 = loadImage("walk_l_3.png");
+ playerLeftWalk3.resize(100,100);
  player = playerRightWalk1;
- player.resize(1000,1000);
+ player.resize(100,100);
  asymbol = loadImage("asymbol.png");
- asymbol.resize(1000,1000);
- p1 = new Player(0,0,player);
+ asymbol.resize(100,100);
+ p1 = new Player(50,50,player);
  management = new levelManager();
  enemylist = new ArrayList<Enemy>();
  projectilelist = new ArrayList<Projectile>();
  spawn = new Spawning();
  user = new UI(p1);
+ backgroundtile = loadImage("tile.png");
+ backgroundtile.resize(2560,2560);
+ background = new BackManager(backgroundtile);
+ 
 
  frameRate(50);
  
@@ -111,6 +118,8 @@ void draw(){
   background(42);
   cam.move(p1.x,p1.y);
   camera(camMat, cam.x,cam.y,scale,scale);
+  background.isdiff(p1);
+  background.renderall();
   for(int i=enemylist.size()-1;i>=0;i--){
      Enemy enemy = enemylist.get(i);
      enemy.updateVector(p1);

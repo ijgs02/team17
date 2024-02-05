@@ -56,8 +56,11 @@ void setup(){
  ptime = millis();
  tick = 0;
  enemyImage1 = loadImage("enemy_walk_1.png");
+ enemyImage1.resize(100, 100);
  enemyImage2 = loadImage("enemy_walk_2.png");
+ enemyImage2.resize(100, 100);
  enemyImage = enemyImage1;
+ enemyImage.resize(100, 100);
  animCounter = 0;
  // player images for animation
  playerRightWalk1 = loadImage("walk_r_1.png"); 
@@ -145,7 +148,7 @@ void draw(){
        enemylist.remove(enemy);  
      }
      else{
-       image(enemyImage, enemy.x - 500, enemy.y - 500);
+       image(enemyImage, enemy.x - 50, enemy.y - 50);
      }
   } 
   for (int i = projectilelist.size() - 1; i >= 0; i-- ) {
